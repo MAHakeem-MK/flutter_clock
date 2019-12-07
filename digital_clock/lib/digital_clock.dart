@@ -7,34 +7,16 @@ import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-enum _Element {
-  background,
-  text,
-  shadow,
-}
-
 enum _TimeOfDay {
-  MID_NIGHT,  // 12AM - 3AM
+  MID_NIGHT, // 12AM - 3AM
   EARLY_DAWN, // 3AM - 6AM
-  DAWN,       // 6AM - 9AM 
-  MORNING,    // 9AM - 12PM
-  NOON,       // 12PM - 3PM
-  AFTERNOON,  // 3PM - 6PM
-  DUSK,       // 6PM - 9PM
-  NIGHT       // 9PM - 12AM
+  DAWN, // 6AM - 9AM
+  MORNING, // 9AM - 12PM
+  NOON, // 12PM - 3PM
+  AFTERNOON, // 3PM - 6PM
+  DUSK, // 6PM - 9PM
+  NIGHT // 9PM - 12AM
 }
-
-final _lightTheme = {
-  _Element.background: Colors.grey,
-  _Element.text: Colors.black,
-  _Element.shadow: Colors.black45,
-};
-
-final _darkTheme = {
-  _Element.background: Colors.black,
-  _Element.text: Colors.white,
-  _Element.shadow: Color(0xFF174EA6),
-};
 
 /// A basic digital clock.
 ///
@@ -49,12 +31,9 @@ class DigitalClock extends StatefulWidget {
 }
 
 class _DigitalClockState extends State<DigitalClock> {
-  int timeFrame = 0;
-  var top = FractionalOffset.bottomLeft;
-  var bottom = FractionalOffset.topRight;
-  var dayColors = [
-    Colors.black, Colors.black45
-  ];
+  var top;
+  var bottom;
+  var skyColors;
 
   DateTime _dateTime = DateTime.now();
   Timer _timer;
@@ -86,46 +65,46 @@ class _DigitalClockState extends State<DigitalClock> {
 
   void _setTimeOfDay(_TimeOfDay timeOfDay) {
     switch (timeOfDay) {
-      case _TimeOfDay.MID_NIGHT : 
-          top = FractionalOffset.bottomLeft;
-          bottom = FractionalOffset.topRight;
-          dayColors = [Colors.black, Colors.black45];
+      case _TimeOfDay.MID_NIGHT:
+        top = FractionalOffset.bottomLeft;
+        bottom = FractionalOffset.topRight;
+        skyColors = [Colors.black, Colors.black45];
         break;
-      case _TimeOfDay.EARLY_DAWN :
+      case _TimeOfDay.EARLY_DAWN:
         top = FractionalOffset.centerLeft;
         bottom = FractionalOffset.centerRight;
-        dayColors = [Colors.yellow[100], Colors.blueGrey];   
-      break;
-      case _TimeOfDay.DAWN :
+        skyColors = [Colors.yellow[100], Colors.blueGrey];
+        break;
+      case _TimeOfDay.DAWN:
         top = FractionalOffset.centerLeft;
         bottom = FractionalOffset.centerRight;
-        dayColors = [Colors.yellowAccent,Colors.blueAccent];       
-      break;
-      case _TimeOfDay.MORNING :
+        skyColors = [Colors.yellowAccent, Colors.blueAccent];
+        break;
+      case _TimeOfDay.MORNING:
         top = FractionalOffset.topLeft;
         bottom = FractionalOffset.topRight;
-        dayColors = [Colors.yellowAccent,Colors.blueAccent];      
-      break;
-      case _TimeOfDay.NOON :
+        skyColors = [Colors.yellowAccent, Colors.blueAccent];
+        break;
+      case _TimeOfDay.NOON:
         top = FractionalOffset.topCenter;
         bottom = FractionalOffset.bottomCenter;
-        dayColors = [Colors.yellowAccent,Colors.blueAccent];   
-      break;
-      case _TimeOfDay.AFTERNOON :
+        skyColors = [Colors.yellowAccent, Colors.blueAccent];
+        break;
+      case _TimeOfDay.AFTERNOON:
         top = FractionalOffset.topRight;
         bottom = FractionalOffset.bottomLeft;
-        dayColors = [Colors.redAccent,Colors.blueAccent];    
-      break;
-      case _TimeOfDay.DUSK :
+        skyColors = [Colors.redAccent, Colors.blueAccent];
+        break;
+      case _TimeOfDay.DUSK:
         top = FractionalOffset.centerRight;
         bottom = FractionalOffset.centerLeft;
-        dayColors = [Colors.redAccent,Colors.blueGrey];     
-      break;
-      case _TimeOfDay.NIGHT :
+        skyColors = [Colors.redAccent, Colors.blueGrey];
+        break;
+      case _TimeOfDay.NIGHT:
         top = FractionalOffset.bottomRight;
         bottom = FractionalOffset.topLeft;
-        dayColors = [Colors.black,Colors.grey];      
-      break;
+        skyColors = [Colors.black, Colors.grey];
+        break;
       default:
     }
   }
@@ -139,6 +118,24 @@ class _DigitalClockState extends State<DigitalClock> {
   void _updateTime() {
     setState(() {
       _dateTime = DateTime.now();
+      int _h = _dateTime.hour;
+      if (_h >= 0 && _h < 3) {
+        _setTimeOfDay(_TimeOfDay.MID_NIGHT);
+      } else if (_h >= 3 && _h < 6) {
+        _setTimeOfDay(_TimeOfDay.EARLY_DAWN);
+      } else if (_h >= 6 && _h < 9) {
+        _setTimeOfDay(_TimeOfDay.DAWN);
+      } else if (_h >= 9 && _h < 12) {
+        _setTimeOfDay(_TimeOfDay.MORNING);
+      } else if (_h >= 12 && _h < 15) {
+        _setTimeOfDay(_TimeOfDay.NOON);
+      } else if (_h >= 15 && _h < 18) {
+        _setTimeOfDay(_TimeOfDay.AFTERNOON);
+      } else if (_h >= 18 && _h < 21) {
+        _setTimeOfDay(_TimeOfDay.DUSK);
+      } else if (_h >= 9 && _h < 12) {
+        _setTimeOfDay(_TimeOfDay.NIGHT);
+      }
       // Update once per minute. If you want to update every second, use the
       // following code.
       _timer = Timer(
@@ -152,27 +149,23 @@ class _DigitalClockState extends State<DigitalClock> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.light
-        ? _lightTheme
-        : _darkTheme;
     final hour =
         DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
-    final fontSize = MediaQuery.of(context).size.width / 3.5;
+    final fontSize = MediaQuery.of(context).size.width / 4.5;
     final offset = -fontSize / 7;
     final defaultStyle = TextStyle(
-      color: colors[_Element.text],
       fontFamily: 'roboto-condensed',
       fontSize: fontSize,
     );
 
     return AnimatedContainer(
-      duration: Duration(seconds: 10),
+      duration: Duration(seconds: 3),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: top,
           end: bottom,
-          colors: dayColors,
+          colors: skyColors,
           stops: [0.0, 1.0],
         ),
       ),
@@ -188,12 +181,10 @@ class _DigitalClockState extends State<DigitalClock> {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         hour,
-                        style: TextStyle(fontSize: 64.0),
+                        style: defaultStyle
                       ),
                     ),
-                  )
-                  // Positioned(left: offset, top: 0, child: Text(hour)),
-                  // Positioned(right: offset, bottom: offset, child: Text(minute)),
+                  ),
                 ],
               ),
               Stack(
@@ -203,21 +194,12 @@ class _DigitalClockState extends State<DigitalClock> {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         minute,
-                        style: TextStyle(fontSize: 64.0),
+                        style: defaultStyle,
                       ),
                     ),
                   )
                 ],
               ),
-              RaisedButton(
-                child: Text("Change"),
-                onPressed: () {
-                  setState(() {
-                    _setTimeOfDay(_TimeOfDay.values[timeFrame]);
-                    timeFrame++;
-                  });
-                },
-              )
             ],
           ),
         ),
