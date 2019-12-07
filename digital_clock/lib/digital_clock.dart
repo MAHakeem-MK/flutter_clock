@@ -87,22 +87,22 @@ class _DigitalClockState extends State<DigitalClock>
       case _TimeOfDay.DAWN:
         top = FractionalOffset.centerLeft;
         bottom = FractionalOffset.centerRight;
-        skyColors = [Colors.yellowAccent, Colors.blueAccent];
+        skyColors = [Colors.yellow[200], Colors.blueAccent];
         break;
       case _TimeOfDay.MORNING:
         top = FractionalOffset.topLeft;
         bottom = FractionalOffset.topRight;
-        skyColors = [Colors.yellowAccent, Colors.blueAccent];
+        skyColors = [Colors.yellow[200], Colors.blueAccent];
         break;
       case _TimeOfDay.NOON:
         top = FractionalOffset.topCenter;
         bottom = FractionalOffset.bottomCenter;
-        skyColors = [Colors.yellowAccent, Colors.blueAccent];
+        skyColors = [Colors.yellow[200], Colors.blueAccent];
         break;
       case _TimeOfDay.AFTERNOON:
         top = FractionalOffset.topRight;
         bottom = FractionalOffset.bottomLeft;
-        skyColors = [Colors.redAccent, Colors.blueAccent];
+        skyColors = [Colors.red[100], Colors.blueAccent];
         break;
       case _TimeOfDay.DUSK:
         top = FractionalOffset.centerRight;
