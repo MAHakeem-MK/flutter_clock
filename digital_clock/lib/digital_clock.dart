@@ -30,10 +30,14 @@ class DigitalClock extends StatefulWidget {
   _DigitalClockState createState() => _DigitalClockState();
 }
 
-class _DigitalClockState extends State<DigitalClock> {
+class _DigitalClockState extends State<DigitalClock>
+    with TickerProviderStateMixin {
   var top;
   var bottom;
   var skyColors;
+
+  AnimationController _controller;
+  Animation<Offset> _animation;
 
   DateTime _dateTime = DateTime.now();
   Timer _timer;
@@ -41,6 +45,11 @@ class _DigitalClockState extends State<DigitalClock> {
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+        duration: const Duration(milliseconds: 100), vsync: this);
+    _animation = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -0.1))
+        .animate(_controller);
+
     widget.model.addListener(_updateModel);
     _updateTime();
     _updateModel();
@@ -109,6 +118,11 @@ class _DigitalClockState extends State<DigitalClock> {
     }
   }
 
+  void _animate() {
+    _controller.forward();
+    Timer(Duration(milliseconds: 100), () => _controller.reverse());
+  }
+
   void _updateModel() {
     setState(() {
       // Cause the clock to rebuild when the model changes.
@@ -117,6 +131,7 @@ class _DigitalClockState extends State<DigitalClock> {
 
   void _updateTime() {
     setState(() {
+      _animate();
       _dateTime = DateTime.now();
       int _h = _dateTime.hour;
       if (_h >= 0 && _h < 3) {
@@ -149,18 +164,18 @@ class _DigitalClockState extends State<DigitalClock> {
 
   @override
   Widget build(BuildContext context) {
-    final hour =
-        DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
-    final minute = DateFormat('mm').format(_dateTime);
-    final fontSize = MediaQuery.of(context).size.width / 4.5;
-    final offset = -fontSize / 7;
+    // final hour =
+    //     DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
+    // final minute = DateFormat('mm').format(_dateTime);
+    final time = DateFormat(widget.model.is24HourFormat ? 'Hm' : 'jm').format(_dateTime);
+    final fontSize = 105.0;
     final defaultStyle = TextStyle(
       fontFamily: 'roboto-condensed',
       fontSize: fontSize,
     );
 
     return AnimatedContainer(
-      duration: Duration(seconds: 3),
+      duration: Duration(minutes: 3),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: top,
@@ -172,34 +187,30 @@ class _DigitalClockState extends State<DigitalClock> {
       child: Center(
         child: DefaultTextStyle(
           style: defaultStyle,
-          child: Row(
+          child: Stack(
             children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        hour,
-                        style: defaultStyle
-                      ),
+              Card(
+                elevation: 2.0,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    time,
+                    style: defaultStyle,
+                  ),
+                ),
+              ),
+              SlideTransition(
+                position: _animation,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      time,
+                      style: defaultStyle,
                     ),
                   ),
-                ],
-              ),
-              Stack(
-                children: <Widget>[
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        minute,
-                        style: defaultStyle,
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                ),
+              )
             ],
           ),
         ),
