@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 enum _TimeOfDay {
-  MID_NIGHT, // 12AM - 3AM
-  EARLY_DAWN, // 3AM - 6AM
-  DAWN, // 6AM - 9AM
-  MORNING, // 9AM - 12PM
-  NOON, // 12PM - 3PM
-  AFTERNOON, // 3PM - 6PM
-  DUSK, // 6PM - 9PM
-  NIGHT // 9PM - 12AM
+  MID_NIGHT, // 00H - 03H (24H time)
+  EARLY_DAWN, // 03H - 06H
+  DAWN, // 06H - 09H
+  MORNING, // 09H - 12H
+  NOON, // 12H - 15H
+  AFTERNOON, // 15H - 18H
+  DUSK, // 18H - 20H
+  NIGHT // 20H - 24H
 }
 
 /// A basic digital clock.
@@ -102,7 +102,7 @@ class _DigitalClockState extends State<DigitalClock>
       case _TimeOfDay.AFTERNOON:
         top = FractionalOffset.topRight;
         bottom = FractionalOffset.bottomLeft;
-        skyColors = [Colors.red[100], Colors.blueAccent];
+        skyColors = [Colors.yellow[200], Colors.blueAccent];
         break;
       case _TimeOfDay.DUSK:
         top = FractionalOffset.centerRight;
@@ -146,9 +146,9 @@ class _DigitalClockState extends State<DigitalClock>
         _setTimeOfDay(_TimeOfDay.NOON);
       } else if (_h >= 15 && _h < 18) {
         _setTimeOfDay(_TimeOfDay.AFTERNOON);
-      } else if (_h >= 18 && _h < 21) {
+      } else if (_h >= 18 && _h < 20) {
         _setTimeOfDay(_TimeOfDay.DUSK);
-      } else if (_h >= 9 && _h < 12) {
+      } else if (_h >= 20 && _h < 24) {
         _setTimeOfDay(_TimeOfDay.NIGHT);
       }
       // Update once per minute. If you want to update every second, use the
