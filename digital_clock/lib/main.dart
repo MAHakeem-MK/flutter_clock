@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Digital clock is customized by Muhammed Abdul Hakeem MK
+// email: dev.mahakeemmk@gmail.com
+// file can be found as digital_clock.dart
+
 import 'dart:io';
 import 'package:flutter_clock_helper/customizer.dart';
 import 'package:flutter_clock_helper/model.dart';
