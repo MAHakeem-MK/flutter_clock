@@ -1,7 +1,4 @@
-// Copyright 2019 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
+// Developer email : dev.mahakeemmk@gmail.com
 import 'dart:async';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +15,7 @@ enum _TimeOfDay {
   NIGHT // 20H - 24H
 }
 
-/// A basic digital clock.
-///
-/// You can do better than this!
+/// A digital clock simulating various sun lighting based on time of day.
 class DigitalClock extends StatefulWidget {
   const DigitalClock(this.model);
 
@@ -35,16 +30,15 @@ class _DigitalClockState extends State<DigitalClock>
   var top;
   var bottom;
   var skyColors;
-
   AnimationController _controller;
   Animation<Offset> _animation;
-
   DateTime _dateTime = DateTime.now();
   Timer _timer;
 
   @override
   void initState() {
     super.initState();
+    // Animation controller for the jumping card animation.
     _controller = AnimationController(
         duration: const Duration(milliseconds: 100), vsync: this);
     _animation = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -0.1))
@@ -71,7 +65,7 @@ class _DigitalClockState extends State<DigitalClock>
     widget.model.dispose();
     super.dispose();
   }
-
+// sun position and light color based on time of day.
   void _setTimeOfDay(_TimeOfDay timeOfDay) {
     switch (timeOfDay) {
       case _TimeOfDay.MID_NIGHT:
@@ -117,7 +111,7 @@ class _DigitalClockState extends State<DigitalClock>
       default:
     }
   }
-
+// jumping card animation.
   void _animate() {
     _controller.forward();
     Timer(Duration(milliseconds: 100), () => _controller.reverse());
@@ -134,6 +128,7 @@ class _DigitalClockState extends State<DigitalClock>
       _animate();
       _dateTime = DateTime.now();
       int _h = _dateTime.hour;
+      // setting time of day to simulate sun positions.
       if (_h >= 0 && _h < 3) {
         _setTimeOfDay(_TimeOfDay.MID_NIGHT);
       } else if (_h >= 3 && _h < 6) {
@@ -151,8 +146,7 @@ class _DigitalClockState extends State<DigitalClock>
       } else if (_h >= 20 && _h < 24) {
         _setTimeOfDay(_TimeOfDay.NIGHT);
       }
-      // Update once per minute. If you want to update every second, use the
-      // following code.
+
       _timer = Timer(
         Duration(minutes: 1) -
             Duration(seconds: _dateTime.second) -
@@ -164,19 +158,21 @@ class _DigitalClockState extends State<DigitalClock>
 
   @override
   Widget build(BuildContext context) {
-    // final hour =
-    //     DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
-    // final minute = DateFormat('mm').format(_dateTime);
-    final time = DateFormat(widget.model.is24HourFormat ? 'Hm' : 'jm').format(_dateTime);
+    // time formatting based on clock setting (24h/12h).
+    final time =
+        DateFormat(widget.model.is24HourFormat ? 'Hm' : 'jm').format(_dateTime);
+    //font size for digital clock text.
     final fontSize = 105.0;
     final defaultStyle = TextStyle(
       fontFamily: 'roboto-condensed',
       fontSize: fontSize,
     );
-
+// Animated container for simulating sun movements and color.
     return AnimatedContainer(
+      //Animation duration for the simulation.
       duration: Duration(minutes: 3),
       decoration: BoxDecoration(
+        //gradient to represent sun light.
         gradient: LinearGradient(
           begin: top,
           end: bottom,
